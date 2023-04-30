@@ -4,6 +4,7 @@ from flask_wtf import FlaskForm
 from flask import Flask, render_template, redirect
 import data.db_session as session
 from data.users import User
+from data.jobs import Jobs
 from wtforms.validators import DataRequired
 import datetime
 
@@ -61,9 +62,9 @@ def login():
         user = db_session.query(User).filter(User.email == form.email.data).first()
 
         if user and user.check_password(form.password.data):
-            account = user.name
+            account = f'{user.name} {user.surname}'
             login_user(user, remember=form.remember_me.data)
-            return redirect("/")
+            return redirect("/works")
 
         return render_template('login.html', message="Неверный логин или пароль", form=form)
 
@@ -73,8 +74,28 @@ def login():
 @app.route('/logout')
 @login_required
 def logout():
+    global account
+
+    account = ''
+
     logout_user()
     return redirect("/")
+
+
+@app.route('/works')
+@login_required
+def table():
+    res = db_session.query(Jobs).all()
+    data = []
+
+    for job in res:
+        time = f'{round((job.end_date - job.start_date).total_seconds() / 3600)} hours'
+        user = db_session.query(User).filter(User.id == job.team_leader).first()
+        team_leader = user.name + ' ' + user.surname
+
+        data.append([job.job, team_leader, time, job.collaborators, job.is_finished])
+
+    return render_template('works.html', jobs=data, account=account)
 
 
 if __name__ == '__main__':

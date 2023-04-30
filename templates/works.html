@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block content %}
+<br>
+<h1>Works log</h1>
+{% for job in jobs %}
+{% set clr = "#c2ffde" if job[4] else "#fff6c1" %}
+<h5>Action #{{ loop.index }}</h5>
+<table class="table">
+  <thead class="thead-light">
+    <tr class="d-flex" style="background-color: #e1e1e1">
+      <th scope="col" class="col-4">Title of activity</th>
+      <th scope="col" class="col-2">Team leader</th>
+      <th scope="col" class="col-2">Duration</th>
+      <th scope="col" class="col-2">List of collaborators</th>
+      <th scope="col" class="col-2">Is finished</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr class="d-flex" style="background-color: #aeeaff">
+      <td class="col-4">{{ job[0] }}</td>
+      <td class="col-2">{{ job[1] }}</td>
+      <td class="col-2">{{ job[2] }}</td>
+      <td class="col-2">{{ job[3] }}</td>
+      <td class="col-2" style="background-color: {{ clr }}">{{ "Is finished" if job[4] else "Is not finished" }}</td>
+    </tr>
+  </tbody>
+</table>
+{% endfor %}
+{% endblock %}
