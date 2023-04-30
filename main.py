@@ -117,6 +117,33 @@ def table():
     return render_template('works.html', jobs=data, account=account)
 
 
+@app.route('/addjob', methods=['GET', 'POST'])
+@login_required
+def addjob():
+    global account
+    form = JobForm()
+    if form.validate_on_submit():
+        user = db_session.query(User).filter(User.id == form.id.data).first()
+        if user:
+            jobs = Jobs()
+            jobs.team_leader = form.id.data
+            jobs.job = form.title.data
+            jobs.work_size = form.work_size.data
+            jobs.collaborators = form.collaborators.data
+            jobs.is_finished = form.done.data
+            jobs.start_date = form.start_date.data
+            jobs.end_date = form.end_date.data
+
+            db_session.add(jobs)
+            db_session.commit()
+
+            return redirect("/works")
+
+        return render_template('job_add.html', message="Oops, smth went wrong", form=form, account=account)
+
+    return render_template('job_add.html', title='Adding work', form=form, account=account)
+
+
 if __name__ == '__main__':
     session.global_init("db/blogs.db")
     db_session = session.create_session()
