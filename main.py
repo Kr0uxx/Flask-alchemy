@@ -15,18 +15,20 @@ app.config['PERMANENT_SESSION_LIFETIME'] = datetime.timedelta(days=365)
 login_manager = LoginManager()
 login_manager.init_app(app)
 
+account = ''
 
-def adding_for_test():
+
+def test():
     user = User()
-    user.surname = "Test"
-    user.name = "Test"
-    user.age = 21
-    user.position = "test"
-    user.speciality = "test"
+    user.surname = "Ben"
+    user.name = "Green"
+    user.age = 45
+    user.position = "Senior"
+    user.speciality = "Doc"
     user.address = "module_1"
-    user.email = "test@test.org"
-    user.password_hash = "test"
-    user.set_password("test")
+    user.email = "Ben@mail.com"
+    user.password_hash = "ben"
+    user.set_password("ben")
 
     db_session.add(user)
     db_session.commit()
@@ -44,19 +46,28 @@ def load_user(user_id):
     return db_session.query(User).get(user_id)
 
 
+@app.route("/")
+def start():
+    global account
+    return render_template('base.html', account=account)
+
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    global account
     form = LoginForm()
+
     if form.validate_on_submit():
         user = db_session.query(User).filter(User.email == form.email.data).first()
 
         if user and user.check_password(form.password.data):
+            account = user.name
             login_user(user, remember=form.remember_me.data)
             return redirect("/")
 
-        return render_template('login.html', message="Неправильный логин или пароль", form=form)
+        return render_template('login.html', message="Неверный логин или пароль", form=form)
 
-    return render_template('login.html', title='Mars One | Авторизация', form=form)
+    return render_template('login.html', title='Mars One | Авторизация', form=form, account='')
 
 
 @app.route('/logout')
@@ -72,3 +83,4 @@ if __name__ == '__main__':
 
     app.run(port=8080, host='127.0.0.1')
 
+    test()
