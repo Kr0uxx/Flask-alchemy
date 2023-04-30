@@ -1,5 +1,5 @@
 from flask_login import LoginManager, login_user, login_required, logout_user
-from wtforms import PasswordField, BooleanField, SubmitField, EmailField
+from wtforms import PasswordField, BooleanField, SubmitField, EmailField, IntegerField, StringField, DateTimeField
 from flask_wtf import FlaskForm
 from flask import Flask, render_template, redirect
 import data.db_session as session
@@ -40,6 +40,25 @@ class LoginForm(FlaskForm):
     password = PasswordField('Пароль', validators=[DataRequired()])
     remember_me = BooleanField('Запомнить меня')
     submit = SubmitField('Войти')
+
+
+class JobForm(FlaskForm):
+    id = IntegerField('Team-leader-id', validators=[DataRequired()])
+
+    title = StringField('Title of job', validators=[DataRequired()])
+
+    work_size = IntegerField('Work size (in hours)', validators=[DataRequired()])
+
+    collaborators = StringField("collaborators' ID using ,", validators=[DataRequired()])
+
+    start_date = DateTimeField('Start date', format='%Y-%m-%d %H:%M:%S', default=datetime.datetime.now)
+
+    end_date = DateTimeField('End date', format='%Y-%m-%d %H:%M:%S',
+                             default=datetime.datetime(year=2030, month=1, day=1, hour=1, minute=0, second=0))
+
+    done = BooleanField('Is finished?')
+
+    submit = SubmitField('Submit')
 
 
 @login_manager.user_loader
