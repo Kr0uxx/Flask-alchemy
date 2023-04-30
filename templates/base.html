@@ -10,7 +10,14 @@
           crossorigin="anonymous">
 </head>
 <body>
-<h1>Миссия Колонизация Марса</h1>
+{% if account != '' %}
+            <h1>Миссия Колонизация Марса
+                <small class="text-muted">{{account}}</small>
+            </h1>
+        {% else %}
+            <h1>Миссия Колонизация Марса
+            </h1>
+        {% endif %}
 <h4>И на Марсе будут яблони цвести!</h4>
 <div></div>
 {% block content %}{% endblock %}

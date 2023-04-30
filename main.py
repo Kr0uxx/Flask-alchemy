@@ -20,8 +20,8 @@ account = ''
 
 def test():
     user = User()
-    user.surname = "Ben"
-    user.name = "Green"
+    user.surname = "Green"
+    user.name = "Ben"
     user.age = 45
     user.position = "Senior"
     user.speciality = "Doc"
